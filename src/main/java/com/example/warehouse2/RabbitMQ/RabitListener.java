@@ -9,17 +9,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RabitListener {
-    Logger logger= LoggerFactory.getLogger(RabitListener.class);
-private RabbitTemplate rabbitTemplate;
+    Logger logger = LoggerFactory.getLogger(RabitListener.class);
+    private final RabbitTemplate rabbitTemplate;
 
-    public RabitListener(RabbitTemplate rabbitTemplate){
+    public RabitListener(RabbitTemplate rabbitTemplate) {
 
-this.rabbitTemplate=rabbitTemplate ;
+        this.rabbitTemplate = rabbitTemplate;
     }
+
     @RabbitListener(queues = "${queue.newReceptQueue}")
-    public void ReceiveRecepy(){
-    Object ok=this.rabbitTemplate.receive();
-System.out.println(ok);
+    public void ReceiveRecepy() {
+        Object ok = this.rabbitTemplate.receive();
+        System.out.println(ok);
 
     }
 

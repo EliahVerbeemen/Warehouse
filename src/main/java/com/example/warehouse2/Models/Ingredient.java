@@ -11,19 +11,21 @@ public class Ingredient {
     @Id
     @GeneratedValue
     private Long IngredientId;
-
-
-   @Enumerated(EnumType.STRING)
-    private DepartmentOfStorage departmentOfStorage;
+    @Enumerated(EnumType.STRING)
+    private TemperatureStorageZones temperatureStorageZones;
+    @Enumerated(EnumType.STRING)
+    private ExpiryTypeZones expiryTypeZones;
 
     @Nullable
     private Duration shelfLife;
 
+    private String dangerClass;
+
     public Ingredient() {
     }
 
-    public Ingredient(DepartmentOfStorage departmentOfStorage, @Nullable Duration shelfLife) {
-        this.departmentOfStorage = departmentOfStorage;
+    public Ingredient(TemperatureStorageZones temperatureStorageZones, @Nullable Duration shelfLife) {
+        this.temperatureStorageZones = temperatureStorageZones;
         this.shelfLife = shelfLife;
     }
 
@@ -35,12 +37,17 @@ public class Ingredient {
         IngredientId = ingredientId;
     }
 
-    public DepartmentOfStorage getDepartmentOfStorage() {
-        return departmentOfStorage;
+    public TemperatureStorageZones getDepartmentOfStorage() {
+        return temperatureStorageZones;
     }
 
-    public void setDepartmentOfStorage(DepartmentOfStorage departmentOfStorage) {
-        this.departmentOfStorage = departmentOfStorage;
+    public void setDepartmentOfStorage(TemperatureStorageZones temperatureStorageZones) {
+        this.temperatureStorageZones = temperatureStorageZones;
+    }
+
+    public void setStorageOptions(TemperatureStorageZones temperatureStorageZone, ExpiryTypeZones expiryTypeZone) {
+        this.temperatureStorageZones = temperatureStorageZone;
+        this.expiryTypeZones = expiryTypeZone;
     }
 
     @Nullable

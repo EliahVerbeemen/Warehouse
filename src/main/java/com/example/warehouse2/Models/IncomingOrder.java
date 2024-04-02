@@ -10,11 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Entity
-public class IncommingOrder {
+public class IncomingOrder {
 
     @Id
     @GeneratedValue
-    private Long incommingOrderId;
+    private Long incomingOrderId;
 
     @ElementCollection
     private Map<Ingredient,Double> ordered=new HashMap<>();
@@ -31,12 +31,12 @@ public class IncommingOrder {
 
     private LocalDate dateOfArrival;
 
-    public Long getIncommingOrderId() {
-        return incommingOrderId;
+    public Long getIncomingOrderId() {
+        return incomingOrderId;
     }
 
-    public void setIncommingOrderId(Long incommingOrderId) {
-        this.incommingOrderId = incommingOrderId;
+    public void setIncomingOrderId(Long incomingOrderId) {
+        this.incomingOrderId = incomingOrderId;
     }
 
     public LocalDate getDateOfArrival() {

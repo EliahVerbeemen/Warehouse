@@ -21,7 +21,6 @@ public class OutgoingOrder {
 
     private LocalDate dateOfCreation;
 
-
     private LocalDate dateOfExcecution;
 
     public Long getOutgoingOrderId() {
