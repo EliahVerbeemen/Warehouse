@@ -1,0 +1,15 @@
+    /*  Product nieuwProduct=new Product();
+       nieuwProduct.setNaam("testNaam");
+       ArrayList<String> stappenplan=new ArrayList<>();
+       stappenplan.add("Voeg dan nu de bloem toe");
+        nieuwProduct.setStappenplan(stappenplan);
+        Ingredient nieuwIngredient=new Ingredient();
+        nieuwIngredient.setNaam("testIngredient");
+        nieuwIngredient.setBeschrijving("Ik ben en testIngredient");
+        IIngredientRepository.save(nieuwIngredient);
+        Ingredient ing=IIngredientRepository.findAll().get(0);
+
+        nieuwProduct.getSamenstelling().put(ing.getProductId(),50d);
+
+
+        IProductRepository.save(nieuwProduct);*/

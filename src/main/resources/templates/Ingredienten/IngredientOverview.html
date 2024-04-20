@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title >Ingrediënten</title>
+</head>
+<body>
+<table>
+  <thead>
+  <tr><td>Naam</td><td>Beschrijving</td></tr>
+
+  </thead>
+  <tbody>
+
+  <tr  th:each="ingr,stat:${Ingredienten}" >
+    <td th:id="tonen+${ingr.ingredientId}">
+      <table>
+        <tr th:if="${ingr.ingredientId!=updateMe||updateMe==0}">
+          <td th:text="${ingr.name}">
+          </td>
+          <td th:text="${ingr.getBeschrijving()}">
+
+          </td>
+          <td>
+            <button th:attr="onclick=${' Bewerken('+  ingr.ingredientId +')'}">Bewerken</button>
+          </td>
+          <td>
+            <button th:attr="onclick=${' Deleten('+  ingr.ingredientId +')'}">Verwijderen</button>
+          </td>
+        </tr>
+<tr th:unless="${ingr.ingredientId!=updateMe||updateMe==0}" >
+
+  <td>
+
+      <form th:action="@{'/ingredienten/update/'+${ingr.ingredientId} }"  method="post" th:object="${ingr}">
+    <label>
+    <input name="name" th:value="${ingr.getName()}" />
+  </label>
+    <label>
+      <input name="Beschrijving" th:value="${ingr.getBeschrijving()}" />
+    </label>
+        <button type="submit">Opslaan</button>
+    </form>
+  </td>
+</tr>
+      </table>
+    </td>
+    <td>
+
+    </td>
+
+    <!--
+
+-->
+
+
+  </tr>
+
+  </tbody>
+
+</table>
+
+<button th:onClick="nieuwIng()">Nieuw Ingredient</button>
+<form action="#" th:action="@{/ingredienten/ingredient/create} " id="nieuw" style="display: none" th:object="${nieuwIngredient}" method="post" >
+  <label for="naam">Naam</label>
+  <input id="naam" name="Naam" th:field="*{name}"/>
+  <label for="beschrijving">beschrijving</label>
+  <input id="beschrijving" name="Beschrijving"   th:field="*{beschrijving}"/>
+  <button type="submit">Opslaan</button>
+</form>
+</body>
+<script>
+
+  function nieuwIng() {
+    document.getElementById("nieuw").style.display="block";
+  }
+
+  function Bewerken( productId){
+//https://www.baeldung.com/spring-thymeleaf-css-js
+
+    window.location.href="/ingredienten/"+productId;
+
+  }
+
+  function Deleten( productId){
+
+    window.location.href="/ingredienten/verwijderen/"+productId;
+
+  }
+
+</script>
+
+</html>

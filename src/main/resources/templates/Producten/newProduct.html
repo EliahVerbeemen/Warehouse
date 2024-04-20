@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NewProduct</title>
+</head>
+<body>
+<form th:action="@{/producten/create}" method="post" th:object="${product}">
+
+<label>Name
+  <input th:field="${product.name}" th:value="${product.name}"/>
+
+</label>
+    <h2>Bereidingswijze</h2>
+    <ul th:each="stap, itemStat : ${product.steps}">
+        <li ><input th:field="${product.steps[__${itemStat.index}__]}" th:value="${product.steps[__${itemStat.index}__]}" /></li>
+
+
+
+    </ul>
+    <button type="submit" name="stap" >Stap toevoegen</button>
+
+    <h2>Samenstelling</h2>
+    <table  >
+        <tr th:each="ing, itemStat : ${product.composition}"  >
+
+            <td   >
+                <select th:field="${product.composition[__${itemStat.index}__]}" >
+                    <option  th:value="${ig.getIngredientId()}" th:each="ig : ${alleIngredienten}" th:text="${ig.getName()}">
+
+
+
+                    </option>
+
+
+                </select>
+
+
+            </td>
+            <td
+            ><input  th:field="${product.amounts[__${itemStat.index}__]}" th:value="${product.amounts.get(__${itemStat.index}__)}">
+
+
+
+            <button type="submit" th:value="${__${itemStat.index}__}" th:name="removeIng">remove</button>
+            </td>
+        </tr>
+
+
+    </table>
+
+    <div><input hidden="hidden" th:field="${product.productId}" th:value="${product.productId}"/></div>
+<button type="submit" th:if="${product.composition.size()!=alleIngredienten.size()}" name="addIng">addIngrediënt</button>
+    <p th:if="${error!=null}" th:text="${error}" ></p>
+
+    <button type="submit" >Opslaan</button>
+
+
+</form>
+
+
+
+</body>
+</html>
