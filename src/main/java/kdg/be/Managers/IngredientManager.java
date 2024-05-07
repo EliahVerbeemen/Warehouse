@@ -1,7 +1,8 @@
 package kdg.be.Managers;
 
-import kdg.be.Models.Ingredient;
-import kdg.be.Repositories.IIngredientRepository;
+import kdg.be.Models.BakeryObjects.Ingredient;
+import kdg.be.Models.BakeryObjects.ManageIngredient;
+import kdg.be.Repositories.IngredientRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -9,46 +10,85 @@ import java.util.Optional;
 
 @Component
 public class IngredientManager implements IIngredientManager {
-    private IIngredientRepository repo;
+    private IngredientRepository repo;
 
-    public IngredientManager(IIngredientRepository repository){
+    public IngredientManager(IngredientRepository repository){
         repo = repository;
     }
+
     @Override
-    public List<Ingredient> getAllIngredients(){
-        return repo.findAll();
-    }
-    @Override
-    public Optional<Ingredient> getIngredientById(Long id){
-        return repo.findById(id);
-    }
-    @Override
-    public Ingredient saveIngredient(Ingredient ingredient){
+    public Ingredient addIngredient(Ingredient ingredient) {
         return repo.save(ingredient);
     }
 
     @Override
-    public void deleteIngredient(Long id){
-        repo.deleteById(id);
+    public Optional<Ingredient> findIngredientById(Long id){return repo.findById(id);}
+    @Override
+    public List<Ingredient> findAll(){return repo.findAll();}
+
+    @Override
+    public Ingredient updateIngredientAmount(Ingredient ingredient) throws Exception {
+     Optional<Ingredient>optionalIngredient=   repo.findById(ingredient.getIngredientId());
+     if(optionalIngredient.isPresent()){
+         Ingredient ingredient1=optionalIngredient.get();
+         ingredient1.setAmountInStock(ingredient.getAmountInStock());
+         System.out.println("check");
+
+         System.out.println(ingredient1.getAmountInStock());
+
+         return  repo.save(ingredient1);
+
+     }
+     else throw new Exception("Ingredient not known");
+
+
+
+
     }
 
-@Override
-    public void updateIngredient(Long id, Ingredient nieuwIngredient){
-
-       Optional<Ingredient> oudOptioneelIngredient= repo.findById(id);
-        if(oudOptioneelIngredient.isPresent()){
-            System.out.println("aangekomen");
-            System.out.println(nieuwIngredient.getName());
-
-            Ingredient upTeDatenIngedient=oudOptioneelIngredient.get();
-            upTeDatenIngedient.setBeschrijving(nieuwIngredient.getBeschrijving());
-            upTeDatenIngedient.setName(nieuwIngredient.getName());
-            repo.save(upTeDatenIngedient);
+    @Override
+    public Ingredient orderIngredients(Ingredient ingredient) throws Exception {
+        Optional<Ingredient>optionalIngredient=   repo.findById(ingredient.getIngredientId());
+        if(optionalIngredient.isPresent()){
+            Ingredient ingredient1=optionalIngredient.get();
+            ingredient1.setAmountInStock(ingredient.getResetAmount());
+            return  repo.save(ingredient1);
 
         }
-        else{
-            System.out.println("niet gevonden");
-        }
+        else throw new Exception("Ingredient not known");
 
     }
+
+    @Override
+    public Ingredient manageIngredient(ManageIngredient manageIngredient) throws Exception {
+        Optional<Ingredient>optionalIngredient=   repo.findById(manageIngredient.getIngredientId());
+        if(optionalIngredient.isPresent()){
+            Ingredient ingredient=optionalIngredient.get();
+           if(manageIngredient.getResetAmount()!=null){
+
+               ingredient.setResetAmount(manageIngredient.getResetAmount());
+               System.out.println(ingredient.getResetAmount());
+           }
+           else{
+               System.out.println("null");
+           }
+            if(manageIngredient.getAmountInStock()!=null){
+
+                ingredient.setAmountInStock(manageIngredient.getAmountInStock());
+
+            }
+           if(manageIngredient.getMinimumAmountInStock()!=null){
+
+               ingredient.setMinimumAmountInStock(manageIngredient.getMinimumAmountInStock());
+
+           }
+
+            return  repo.save(ingredient);
+
+        }
+        else throw new Exception("Ingredient not known");
+
+    }
+
+
 }

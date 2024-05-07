@@ -1,22 +1,17 @@
 package kdg.be.Models;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import kdg.be.Models.BakeryObjects.Ingredient;
 
-import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
-import static kdg.be.Models.ProductState.Nieuw;
 
 @Entity
-/*@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "productId")*/
-public class Product implements Serializable {
+public class Product {
     //Properties
     @Id
-    @GeneratedValue
     private Long productId;
     private String name;
     @ElementCollection
@@ -29,7 +24,6 @@ public class Product implements Serializable {
     private List<Double> amounts = new ArrayList<>();
 
 
-    private ProductState _ProductStatus = Nieuw;
 
     //Constructors
     public Product() {
@@ -40,7 +34,7 @@ public class Product implements Serializable {
         this.steps = steps;
     }
 
-    public Product(String name, List<String> steps, List<Ingredient> composition,List<Double>amounts) {
+    public Product(String name, List<String> steps, List<Ingredient> composition, List<Double>amounts) {
         this.name = name;
         this.steps = steps;
         this.composition = composition;
@@ -66,13 +60,6 @@ public class Product implements Serializable {
     //GET & SET
 
 
-    public ProductState get_ProductStatus() {
-        return _ProductStatus;
-    }
-
-    public void set_ProductStatus(ProductState _ProductStatus) {
-        this._ProductStatus = _ProductStatus;
-    }
 
     public String getName() {
         return name;
@@ -82,13 +69,6 @@ public class Product implements Serializable {
         this.name = name;
     }
 
-    public ProductState getProductStatus() {
-        return _ProductStatus;
-    }
-
-    public void setProductStatus(ProductState productStatus) {
-        _ProductStatus = productStatus;
-    }
 
     public Long getProductId() {
         return productId;

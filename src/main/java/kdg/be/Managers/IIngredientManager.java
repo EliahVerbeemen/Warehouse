@@ -1,15 +1,21 @@
 package kdg.be.Managers;
 
-import kdg.be.Models.Ingredient;
+import kdg.be.Models.BakeryObjects.Ingredient;
+import kdg.be.Models.BakeryObjects.ManageIngredient;
 
 import java.util.List;
 import java.util.Optional;
 
-
 public interface IIngredientManager {
-    public List<Ingredient> getAllIngredients();
-    public Optional<Ingredient> getIngredientById(Long id);
-    public Ingredient saveIngredient(Ingredient ingredient);
-    public void deleteIngredient(Long id);
-    public void updateIngredient(Long id, Ingredient nieuwIngredient);
+    public Ingredient addIngredient(Ingredient ingredient);
+
+    public Optional<Ingredient> findIngredientById(Long id);
+
+    public List<Ingredient> findAll();
+
+    public Ingredient updateIngredientAmount(Ingredient ingredient) throws Exception;
+
+    Ingredient orderIngredients(Ingredient ingredient) throws Exception;
+
+    Ingredient manageIngredient(ManageIngredient manageIngredient) throws Exception;
 }
