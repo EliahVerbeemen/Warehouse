@@ -7,9 +7,8 @@ import java.util.List;
 
 @Data
 public class BatchForWarehouse {
-    List<Ingredient> ingredients=new ArrayList<>();
-    List<Double>Amounts=new ArrayList<>();
-
+    List<Ingredient> ingredients = new ArrayList<>();
+    List<Double> Amounts = new ArrayList<>();
     Long batchId;
 
     public BatchForWarehouse() {

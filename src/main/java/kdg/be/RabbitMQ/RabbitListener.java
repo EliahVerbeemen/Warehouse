@@ -1,15 +1,13 @@
 package kdg.be.RabbitMQ;
 
-import kdg.be.Managers.IngredientManager;
 import kdg.be.Models.BakeryObjects.BatchForWarehouse;
 import kdg.be.Models.BakeryObjects.Ingredient;
 import kdg.be.Models.OutgoingOrder;
 import kdg.be.Models.Product;
+import kdg.be.Services.IngredientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-
-
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -20,14 +18,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Service
 public class RabbitListener {
     private final RabbitTemplate rabbitTemplate;
-    private final IngredientManager ingredientManager;
+    private final IngredientService ingredientService;
 
     Logger logger = LoggerFactory.getLogger(RabbitListener.class);
 
-    public RabbitListener(RabbitTemplate rabbitTemplate, IngredientManager ingredientManager) {
+    public RabbitListener(RabbitTemplate rabbitTemplate, IngredientService ingredientService) {
 
         this.rabbitTemplate = rabbitTemplate;
-        this.ingredientManager = ingredientManager;
+        this.ingredientService = ingredientService;
     }
 
     @org.springframework.amqp.rabbit.annotation.RabbitListener(queues = "warehouseQueu")
@@ -35,9 +33,9 @@ public class RabbitListener {
 
 
         product.getComposition().forEach(i -> {
-            if (ingredientManager.findIngredientById(i.getIngredientId()).isEmpty()) {
+            if (ingredientService.findIngredientById(i.getIngredientId()).isEmpty()) {
 
-                ingredientManager.addIngredient(i);
+                ingredientService.addIngredient(i);
 
             }
         });
@@ -45,156 +43,82 @@ public class RabbitListener {
 
     }
 
-
-
-
-
-
-
-  /*  @org.springframework.amqp.rabbit.annotation.RabbitListener(queues ={"amq.rabbitmq.reply-to"},ackMode = "NONE")
-    @SendTo("batchQueu")
-    public Message<String> ReceiveBatch(Batch batch){
-
-
-        return org.springframework.messaging.support.MessageBuilder.withPayload("check")
-                .setHeader(AmqpHeaders.REPLY_TO, "batchQueu")
-                .build();
-
-
-    }
-            */
-
     @org.springframework.amqp.rabbit.annotation.RabbitListener(queues = "BatchQueu")
     public void ReceiveBatch(BatchForWarehouse batch) throws InterruptedException {
 
-Map<Ingredient,Double>ingedientMap=convertToMap(batch);
-
-        if(sufficientResources(ingedientMap, batch.getBatchId()).get()){
-
-
-
-
-        }
-
-
-
+        Map<Ingredient, Double> ingedientMap = convertToMap(batch);
 
     }
 
-    public Map<Ingredient,Double> convertToMap(BatchForWarehouse batch){
-
-        Map<Ingredient,Double>ingredientMap=new HashMap<>();
-        for(int i=0;i<batch.getIngredients().size();i++){
-
-            ingredientMap.put(batch.getIngredients().get(i),batch.getAmounts().get(i));
-
+    public Map<Ingredient, Double> convertToMap(BatchForWarehouse batch) {
+        Map<Ingredient, Double> ingredientMap = new HashMap<>();
+        for (int i = 0; i < batch.getIngredients().size(); i++) {
+            ingredientMap.put(batch.getIngredients().get(i), batch.getAmounts().get(i));
         }
         return ingredientMap;
     }
 
 
-    public AtomicBoolean sufficientResources(Map<Ingredient,Double> map, Long batchId) throws InterruptedException {
+    public AtomicBoolean sufficientResources(Map<Ingredient, Double> map, Long batchId) throws InterruptedException {
+        List<Ingredient> ingredientsToOrder = new ArrayList<>();
+        AtomicBoolean sufficient = new AtomicBoolean(true);
 
-        List<Ingredient>ingredientsToOrder=new ArrayList<>();
-        AtomicBoolean sufficient= new AtomicBoolean(true);
+        map.forEach((ing, amount) -> {
+            Optional<Ingredient> optionalIngredient = ingredientService.findIngredientById(ing.getIngredientId());
+            if (optionalIngredient.isPresent()) {
+                Ingredient ingredient = optionalIngredient.get();
+                if (ingredient.getAmountInStock() < amount) {
+                    sufficient.set(false);
+                    ingredientsToOrder.add(ingredient);
+                } else if (ingredient.getAmountInStock() - amount < ingredient.getMinimumAmountInStock()) {
+                    ingredientsToOrder.add(ingredient);
+                }
+            } else {
+                logger.warn("Ingredient niet aanwezig!");
+            }
+        });
 
-        map.forEach((ing,amount)->{
+        if (!ingredientsToOrder.isEmpty()) {
+            createOutgoingOrder(new OutgoingOrder(ingredientsToOrder, batchId, !sufficient.get()));
+        }
 
-        Optional<Ingredient>optionalIngredient= ingredientManager.findIngredientById(ing.getIngredientId())   ;
-         if(optionalIngredient.isPresent()) {
-
-             Ingredient ingredient=optionalIngredient.get();
-          //Er is een tekort
-
-             if(ingredient.getAmountInStock()<amount){
-               sufficient.set(false);
-                ingredientsToOrder.add(ingredient);
-             } else if (ingredient.getAmountInStock()-amount< ingredient.getMinimumAmountInStock()) {
-                 ingredientsToOrder.add(ingredient);
-
-             }
-
-
-
-         }
-         else{
-
-             logger.warn("Ingredient niet aanwezig!");
-
-         }
-
-      });
-
-if(ingredientsToOrder.size()>0){
-
-    createOutgoingOrder(new OutgoingOrder(ingredientsToOrder,batchId, !sufficient.get()));
-
-}
-
-if(sufficient.get()){
-
-    rabbitTemplate.convertAndSend("ingAvailableExchange","",batchId);
-
-    decreaseAmounts(map);
-System.out.println("voldoende");
-}
-return sufficient;
+        if (sufficient.get()) {
+            rabbitTemplate.convertAndSend("ingAvailableExchange", "", batchId);
+            decreaseAmounts(map);
+            System.out.println("voldoende");
+        }
+        return sufficient;
 
     }
 
-    public void decreaseAmounts(Map<Ingredient,Double>outgoingIngredients){
-        outgoingIngredients.forEach((ing,amount)->{
-
-          Optional<Ingredient>optionalIngredient=  ingredientManager.findIngredientById(ing.getIngredientId());
-          if(optionalIngredient.isPresent()){
-              Ingredient ingredient=optionalIngredient.get();
-              ingredient.setAmountInStock(ingredient.getAmountInStock()-amount);
-              try {
-                  ingredientManager.updateIngredientAmount(ingredient);
-              } catch (Exception e) {
-                  throw new RuntimeException(e);
-              }
-
-          }
-          else{
-
-              throw new RuntimeException("ingredient not present");
-          }
-
-
+    public void decreaseAmounts(Map<Ingredient, Double> outgoingIngredients) {
+        outgoingIngredients.forEach((ing, amount) -> {
+            Optional<Ingredient> optionalIngredient = ingredientService.findIngredientById(ing.getIngredientId());
+            if (optionalIngredient.isPresent()) {
+                Ingredient ingredient = optionalIngredient.get();
+                ingredient.setAmountInStock(ingredient.getAmountInStock() - amount);
+                try {
+                    ingredientService.updateIngredientAmount(ingredient);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                throw new RuntimeException("ingredient not present");
+            }
             System.out.println("decrease toegepast");
-
-
-
-
-
-
-
         });
-
-
-
     }
 
     public void createOutgoingOrder(OutgoingOrder outgoingOrder) throws InterruptedException {
-
-System.out.println("outgoing order gecreërd");
-
+        System.out.println("outgoing order gecreërd");
         TimeUnit.SECONDS.sleep(15);
-outgoingOrder.getToOrder().forEach(ing->{
-
-    try {
-        ingredientManager.orderIngredients(ing);
-
-       rabbitTemplate.convertAndSend("ingAvailableExchange","",outgoingOrder.getBatchid());
-
-    } catch (Exception e) {
-        throw new RuntimeException(e);
+        outgoingOrder.getToOrder().forEach(ing -> {
+            try {
+                ingredientService.orderIngredients(ing);
+                rabbitTemplate.convertAndSend("ingAvailableExchange", "", outgoingOrder.getBatchId());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
-
-});
-
-
-    }
-
 }

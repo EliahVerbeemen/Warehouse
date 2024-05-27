@@ -1,42 +1,43 @@
 package kdg.be.Models;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import kdg.be.Models.BakeryObjects.Ingredient;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 public class OutgoingOrder {
 
-
+    public boolean shortage;
+    Long batchid;
+    @OneToMany
+    List<Ingredient> toOrder = new ArrayList<>();
     @Id
     private Long outgoinorderId;
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm")
     @CreatedDate
     private LocalDateTime batchDate;
 
-    Long batchid;
-
-    //true wilt zeggen dat van zora ze binnenkome de bakkery op de hoogte gesteld moet worden
-    public boolean shortage;
-
-    @OneToMany
-    List<Ingredient> toOrder=new ArrayList<>();
     public OutgoingOrder() {
-
     }
 
-    public Long getOutgoinorderId() {
+    public OutgoingOrder(List<Ingredient> ingredients, Long batchId, boolean shortage) {
+        this.batchid = batchId;
+        this.toOrder = ingredients;
+        this.shortage = shortage;
+    }
+
+    public Long getOutgoinOrderId() {
         return outgoinorderId;
     }
 
-    public void setOutgoinorderId(Long outgoinorderId) {
+    public void setOutgoingOrderId(Long outgoinorderId) {
         this.outgoinorderId = outgoinorderId;
     }
 
@@ -48,11 +49,11 @@ public class OutgoingOrder {
         this.batchDate = batchDate;
     }
 
-    public Long getBatchid() {
+    public Long getBatchId() {
         return batchid;
     }
 
-    public void setBatchid(Long batchid) {
+    public void setBatchId(Long batchid) {
         this.batchid = batchid;
     }
 
@@ -71,18 +72,6 @@ public class OutgoingOrder {
     public void setToOrder(List<Ingredient> toOrder) {
         this.toOrder = toOrder;
     }
-
-    public OutgoingOrder(List<Ingredient>ingredients, Long batchId, boolean shortage) {
-
-this.batchid=batchId;
-
-        this.toOrder=ingredients;
-        this.shortage=shortage;
-
-    }
-
-
-
 
 
 }

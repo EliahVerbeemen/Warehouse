@@ -6,18 +6,15 @@ public class ManageIngredient {
 
     private Double amountInStock;
     private Double minimumAmountInStock;
-
     private Double resetAmount;
-
     private Long ingredientId;
-
 
 
     public ManageIngredient(Optional<Double> amountInStock, Optional<Double> minimumAmountInStock, Optional<Double> resetAmount, Long ingredientId) {
         amountInStock.ifPresent(aDouble -> this.amountInStock = aDouble);
         minimumAmountInStock.ifPresent(aDouble -> this.minimumAmountInStock = aDouble);
         resetAmount.ifPresent(aDouble -> this.resetAmount = aDouble);
-        this.ingredientId=ingredientId;
+        this.ingredientId = ingredientId;
     }
 
     public ManageIngredient() {

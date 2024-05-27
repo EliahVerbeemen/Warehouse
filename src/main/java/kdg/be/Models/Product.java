@@ -16,13 +16,11 @@ public class Product {
     private String name;
     @ElementCollection
     private List<String> steps = new ArrayList<>();
-   @ManyToMany(cascade = CascadeType.ALL,fetch= FetchType.EAGER
-     ,mappedBy = "product")
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER
+            , mappedBy = "product")
     private List<Ingredient> composition = new ArrayList<>();
-
     @ElementCollection
     private List<Double> amounts = new ArrayList<>();
-
 
 
     //Constructors
@@ -34,11 +32,11 @@ public class Product {
         this.steps = steps;
     }
 
-    public Product(String name, List<String> steps, List<Ingredient> composition, List<Double>amounts) {
+    public Product(String name, List<String> steps, List<Ingredient> composition, List<Double> amounts) {
         this.name = name;
         this.steps = steps;
         this.composition = composition;
-        this.amounts=amounts;
+        this.amounts = amounts;
     }
 
     public List<Ingredient> getComposition() {
@@ -56,32 +54,21 @@ public class Product {
     public void setAmounts(List<Double> amounts) {
         this.amounts = amounts;
     }
-// @JsonDeserialize(keyUsing = IngredientDeserializer.class)
-    //GET & SET
-
-
-
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
-
-
     public Long getProductId() {
         return productId;
     }
-
     public void setProductId(Long productId) {
         this.productId = productId;
     }
-
     public List<String> getSteps() {
         return steps;
     }
-
     public void setSteps(List<String> steps) {
         this.steps = steps;
     }
