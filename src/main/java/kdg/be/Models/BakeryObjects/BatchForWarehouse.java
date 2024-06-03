@@ -5,20 +5,18 @@ package kdg.be.Models.BakeryObjects;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import kdg.be.Services.BatchDeseriaizer;
+import kdg.be.Services.BatchDeserializer;
 import lombok.Data;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-@JsonDeserialize(using = BatchDeseriaizer.class)
+@JsonDeserialize(using = BatchDeserializer.class)
 @Data
 public class BatchForWarehouse {
     List<Ingredient> ingredients=new ArrayList<>();
     List<Double>Amounts=new ArrayList<>();
-
     Long batchId;
 
     public BatchForWarehouse() {

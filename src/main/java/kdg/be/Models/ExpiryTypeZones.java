@@ -1,7 +1,7 @@
 package kdg.be.Models;
 
 public enum ExpiryTypeZones {
-    TGT,
-    THT,
-    ZONDER
+    USE_BY,
+    BEST_BEFORE,
+    NO_EXPIRATION
 }

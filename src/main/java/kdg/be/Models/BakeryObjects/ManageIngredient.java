@@ -3,15 +3,10 @@ package kdg.be.Models.BakeryObjects;
 import java.util.Optional;
 
 public class ManageIngredient {
-
     private Double amountInStock;
     private Double minimumAmountInStock;
-
     private Double resetAmount;
-
     private Long ingredientId;
-
-
 
     public ManageIngredient(Optional<Double> amountInStock, Optional<Double> minimumAmountInStock, Optional<Double> resetAmount, Long ingredientId) {
         amountInStock.ifPresent(aDouble -> this.amountInStock = aDouble);

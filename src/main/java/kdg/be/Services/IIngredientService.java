@@ -1,4 +1,4 @@
-package kdg.be.Managers;
+package kdg.be.Services;
 
 import kdg.be.Models.BakeryObjects.Ingredient;
 import kdg.be.Models.BakeryObjects.ManageIngredient;
@@ -6,7 +6,7 @@ import kdg.be.Models.BakeryObjects.ManageIngredient;
 import java.util.List;
 import java.util.Optional;
 
-public interface IIngredientManager {
+public interface IIngredientService {
     public Ingredient addIngredient(Ingredient ingredient);
 
     public Optional<Ingredient> findIngredientById(Long id);

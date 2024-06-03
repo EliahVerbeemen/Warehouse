@@ -2,44 +2,27 @@ package kdg.be.RabbitMQ;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kdg.be.Controllers.WarehouseController;
-import kdg.be.Managers.IngredientManager;
+import kdg.be.Services.IngredientService;
 import kdg.be.Models.BakeryObjects.BatchForWarehouse;
 import kdg.be.Models.BakeryObjects.Ingredient;
-import kdg.be.Models.BakeryObjects.ManageIngredient;
 import kdg.be.Models.Product;
-import kdg.be.Repositories.IngredientRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.xmlunit.util.Predicate;
-import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BooleanSupplier;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class RabbitListenerTest {
 
     @Autowired
-    private IngredientManager ingredientManager;
+    private IngredientService ingredientService;
 
     @Autowired
     private RabbitListener rabbitListener;
@@ -91,7 +74,7 @@ this.ingreientTwee=ingredientTwee;
         ObjectMapper objectMapper=new ObjectMapper();
 
         String jsonProduct=    objectMapper.writeValueAsString(product);
- //      rabbitListener.ReceiveRecipe(jsonProduct);
+ //      rabbitListener.receiveRecipe(jsonProduct);
 
 
 
@@ -99,7 +82,7 @@ this.ingreientTwee=ingredientTwee;
     @Test
     public void ReceiveRecepyTest(){
 
-Assertions.assertEquals(ingredientManager.findAll().size(),2);
+Assertions.assertEquals(ingredientService.findAll().size(),2);
 
 
     }
@@ -136,7 +119,7 @@ mockMvc.perform(MockMvcRequestBuilders.patch("http://localhost:8079/api/ingredie
     @Test
     public void Mapconversion() throws InterruptedException {
 
-       // rabbitListener.ReceiveBatch();
+       // rabbitListener.receiveBatch();
        BatchForWarehouse batchForWarehouse= new BatchForWarehouse();
        List<Ingredient>ing=new ArrayList<>();
        ing.add(ingredientEen);
@@ -211,9 +194,9 @@ mockMvc.perform(MockMvcRequestBuilders.patch("http://localhost:8079/api/ingredie
         boolean bo= ((boolean) b.get());
         Assertions.assertTrue(bo);
 
-Assertions.assertEquals(this.ingredientManager.findAll().size(),2);
-        Assertions.assertEquals(this.ingredientManager.findIngredientById(1L).get().getAmountInStock(),115);
-        Assertions.assertEquals(this.ingredientManager.findIngredientById(2L).get().getAmountInStock(),86);
+Assertions.assertEquals(this.ingredientService.findAll().size(),2);
+        Assertions.assertEquals(this.ingredientService.findIngredientById(1L).get().getAmountInStock(),115);
+        Assertions.assertEquals(this.ingredientService.findIngredientById(2L).get().getAmountInStock(),86);
 
 
 

@@ -14,22 +14,16 @@ import java.util.Map;
 @Entity
 public class OutgoingOrder {
 
-
     @Id
     private Long outgoinorderId;
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm")
     @CreatedDate
     private LocalDateTime batchDate;
-
     Long batchid;
-
-    //true wilt zeggen dat van zora ze binnenkome de bakkery op de hoogte gesteld moet worden
     public boolean shortage;
-
     @OneToMany
     List<Ingredient> toOrder=new ArrayList<>();
     public OutgoingOrder() {
-
     }
 
     public Long getOutgoinorderId() {
@@ -75,7 +69,6 @@ public class OutgoingOrder {
     public OutgoingOrder(List<Ingredient>ingredients, Long batchId, boolean shortage) {
 
 this.batchid=batchId;
-
         this.toOrder=ingredients;
         this.shortage=shortage;
 

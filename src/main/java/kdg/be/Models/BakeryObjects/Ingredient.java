@@ -1,10 +1,10 @@
 package kdg.be.Models.BakeryObjects;
 
+import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
 import kdg.be.Models.ExpiryTypeZones;
 import kdg.be.Models.Product;
 import kdg.be.Models.TemperatureStorageZones;
-import jakarta.annotation.Nullable;
-import jakarta.persistence.*;
 
 import java.time.Duration;
 import java.util.List;
@@ -12,20 +12,43 @@ import java.util.List;
 @Entity
 public class Ingredient {
 
-    @Id
-    private Long IngredientId;
-
-
     @ManyToMany
     // @JoinColumn(name = "item_id")
     List<Product> product;
+    @Id
+    private Long IngredientId;
     private String name;
+    private String description;
+    private double amountInStock = 100;
+    private double minimumAmountInStock = 30;
+    private double resetAmount = 100;
+    @Enumerated(EnumType.STRING)
+    private TemperatureStorageZones temperatureStorageZones;
+    @Enumerated(EnumType.STRING)
+    private ExpiryTypeZones expiryTypeZones;
+    @Nullable
+    private Duration shelfLife;
+    private String dangerClass;
 
     public Ingredient(Long id, String name, String description) {
-        this.IngredientId=id;
-        this.description=description;
-        this.name=name;
+        this.IngredientId = id;
+        this.description = description;
+        this.name = name;
 
+    }
+
+    public Ingredient(String name, String description) {
+        this.name = name;
+        this.description = description;
+
+    }
+
+    public Ingredient() {
+    }
+
+    public Ingredient(TemperatureStorageZones temperatureStorageZones, @Nullable Duration shelfLife) {
+        this.temperatureStorageZones = temperatureStorageZones;
+        this.shelfLife = shelfLife;
     }
 
     public List<Product> getProduct() {
@@ -36,15 +59,6 @@ public class Ingredient {
         this.product = product;
     }
 
-    private String description;
-
-
-    public Ingredient(String name, String description) {
-        this.name = name;
-        this.description = description;
-
-    }
-
     public String getDescription() {
         return description;
     }
@@ -53,7 +67,7 @@ public class Ingredient {
         this.description = description;
     }
 
-    public  double getAmountInStock() {
+    public double getAmountInStock() {
         return amountInStock;
     }
 
@@ -85,9 +99,6 @@ public class Ingredient {
         this.dangerClass = dangerClass;
     }
 
-   private   double  amountInStock=100;
-    private   double  minimumAmountInStock=30;
-
     public double getResetAmount() {
         return resetAmount;
     }
@@ -96,14 +107,11 @@ public class Ingredient {
         this.resetAmount = resetAmount;
     }
 
-    private   double  resetAmount=100;
-
-
-    public  double getMinimumAmountInStock() {
+    public double getMinimumAmountInStock() {
         return minimumAmountInStock;
     }
 
-    public  void setMinimumAmountInStock(double minimumAmountInStock) {
+    public void setMinimumAmountInStock(double minimumAmountInStock) {
         this.minimumAmountInStock = minimumAmountInStock;
     }
 
@@ -113,53 +121,6 @@ public class Ingredient {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getBeschrijving() {
-        return description;
-    }
-
-    public void setBeschrijving(String beschrijving) {
-        description = beschrijving;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    @Enumerated(EnumType.STRING)
-    private TemperatureStorageZones temperatureStorageZones;
-    @Enumerated(EnumType.STRING)
-    private ExpiryTypeZones expiryTypeZones;
-
-    @Nullable
-    private Duration shelfLife;
-
-    private String dangerClass;
-
-    public Ingredient() {
-    }
-
-    public Ingredient(TemperatureStorageZones temperatureStorageZones, @Nullable Duration shelfLife) {
-        this.temperatureStorageZones = temperatureStorageZones;
-        this.shelfLife = shelfLife;
     }
 
     public Long getIngredientId() {

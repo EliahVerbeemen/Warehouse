@@ -11,8 +11,5 @@ public class Warehouse2Application {
     public static void main(String[] args) {
         SpringApplication.run(Warehouse2Application.class, args);
         System.setProperty("java.util.logging.config.file", "{path_to_the_logging_config_file}");
-
-
     }
-
 }
